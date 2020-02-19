@@ -89,7 +89,7 @@ class PrivateChat(commands.Cog):
     async def score(ctx): 
         pass
 
-    @commands.command(name='getScore', description:"Score du joueur", pass_context=True)
+    @commands.command(name='getScore', description="Score du joueur", pass_context=True)
     async def get_score(ctx):
         pass
     
