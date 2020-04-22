@@ -14,4 +14,4 @@ async def on_message(self, message):
     # print('------------')
     pass
 
-bot.run('NjM2NTcxOTQzMzczNTA0NTM0.XbBoNw.cPaIrMfaOKjWj7Q3YioAtbvg8wo')
+bot.run('NjM2NTcxOTQzMzczNTA0NTM0.XoIfng.gSIcXIgYuMrduPgr-vmVMVFmC6Y')
