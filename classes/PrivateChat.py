@@ -92,57 +92,6 @@ class PrivateChat(commands.Cog):
         print('Aucun utilisateur trouvé')
         return
 
-### SCORE ###
-    # @commands.command(name="gScore", description="Score blague de merde", pass_context=True)
-    async def get_score(self, ctx, username):
-        try:
-            score = "User not found"
-            for user in ctx.guild.members:
-                if user.name == username:
-                    score = self.score_user(user.id)
-                    continue
-        except Exception as e:
-            print(e)
-            score = "Erreur lors de la requete {}".format(e)
-        await ctx.message.channel.send('Le score de {} est de : {} '.format(username, score))
-
-    # @commands.command(name="addScore", description="Met a jour le score blague de merde", pass_context=True)
-    async def add_to_score(self, ctx, username, add_score_point):
-        try:
-            for user in ctx.guild.members:
-                if user.name == username:
-                    self.add_score(str(user.id), add_score_point)
-                    await ctx.message.channel.send("Le score de {} est maintenant de {}".format(user.name, self.score_user(user.id)))
-                    continue
-        except Exception as e:
-            print(e)
-            await ctx.message.channel.send('Erreur pour mettre a jour le score de {} : {}'.format(username, e))
-
-    # @commands.command(name="allScore", description="Affiche le score de toutes les personnes du serveur", pass_context=True)
-    async def all_score(self, ctx): 
-        try:
-            for user in ctx.guild.members:
-                try:
-                    score = self.score_user(str(user.id))
-                except:
-                    score = "Impossible de récupérer le score."
-                    continue
-                await ctx.message.channel.send("Le score de {} est de : {}".format(user.name, score))
-        except Exception as e:
-            await ctx.message.channel.send('Une erreur est survenu : {}'.format(e))
-
-    
-    @commands.command(name="score", description="gère le score", pass_context=True)
-    async def score(self, ctx, username = "", add_score_point=0):
-        if (username.strip() != "" and int(add_score_point) != 0):
-            await self.add_to_score(ctx, username, add_score_point)
-        elif (username.strip() != ""):
-            await self.get_score(ctx, username)
-        else:
-            await self.all_score(ctx)
-
-### FIN SCORE ###
-
     @commands.command(name="hentai", description=":smirk:", pass_context=True)
     async def hentai_pic(self, ctx):
         await self.send_pic(ctx, 'hentai')
@@ -182,55 +131,6 @@ class PrivateChat(commands.Cog):
             return True
 
 
-### SCORE DE SEL ###
-
-
-    async def get_score_sel(self, ctx, username):
-        try:
-            score = "User not found"
-            for user in ctx.guild.members:
-                if user.name == username:
-                    score = self.sel_user(user.id)
-                    continue
-        except Exception as e:
-            print(e)
-            score = "Erreur lors de la requete {}".format(e)
-        await ctx.message.channel.send('Le sel de {} est de : {} '.format(username, score))
-
-    async def add_to_sel(self, ctx, username, add_score_point):
-        try:
-            for user in ctx.guild.members:
-                if user.name == username:
-                    self.add_sel(str(user.id), add_score_point)
-                    await ctx.message.channel.send("Le sel de {} est maintenant de {}".format(user.name, self.sel_user(user.id)))
-                    continue
-        except Exception as e:
-            print(e)
-            await ctx.message.channel.send('Erreur pour mettre a jour le score de {} : {}'.format(username, e))
-
-    async def all_sel(self, ctx): 
-        try:
-            for user in ctx.guild.members:
-                try:
-                    score = self.sel_user(str(user.id))
-                except:
-                    score = "Impossible de récupérer le score."
-                    continue
-                await ctx.message.channel.send("Le sel de {} est de : {}".format(user.name, score))
-        except Exception as e:
-            await ctx.message.channel.send('Une erreur est survenu : {}'.format(e))
-
-    @commands.command(name="sel", description = "Sel", pass_context=True)
-    async def sel(self, ctx, username = "", add_score_point=0):
-        if (username.strip() != "" and int(add_score_point) != 0):
-            await self.add_to_sel(ctx, username, add_score_point)
-        elif (username.strip() != ""):
-            await self.get_score_sel(ctx, username)
-        else:
-            await self.all_sel(ctx)
-
-
-### FIN DU SEL ###
 
 ### SCORE DE GORGEE ###
 
@@ -295,68 +195,6 @@ class PrivateChat(commands.Cog):
     #     except Exception as e:
     #         await ctx.message.channel.send('Erreur : {}'.format(e))
 
-    def score_user(self, discord_tag):
-        mariadb_connection = mariadb.connect(user='asphyx', password='', database='discord_private_chat')
-        cursor = mariadb_connection.cursor()
-
-        cursor.execute('SELECT `score` FROM `users` WHERE `discord_tag` = "{}"'.format(discord_tag))
-        res = cursor.fetchone()[0]
-        mariadb_connection.close()
-        return res
-
-    def add_score(self, discord_tag, value):
-        mariadb_connection = mariadb.connect(user='asphyx', password='', database='discord_private_chat')
-        cursor = mariadb_connection.cursor()
-        current = self.score_user(discord_tag)
-
-        value = str(int(value) + int(current))
-        cursor.execute('UPDATE users SET score = {} WHERE discord_tag = "{}"'.format(value, str(discord_tag)))
-        mariadb_connection.commit()
-        mariadb_connection.close()
-
-    def create_user_database(self, username, userid):
-        try:
-            mariadb_connection = mariadb.connect(user='asphyx', password='', database='discord_private_chat')
-            cursor = mariadb_connection.cursor()
-            cursor.execute('INSERT INTO users(`username`, `score`, `discord_tag`) VALUES ({}, 0, {});'.format(username, userid))
-            mariadb_connection.commit()
-            mariadb_connection.close()
-        except Exception as e:
-            print(e)
-
-
-### SEL ###
-
-    def sel_user(self, discord_tag):
-        mariadb_connection = mariadb.connect(user='asphyx', password='', database='discord_private_chat')
-        cursor = mariadb_connection.cursor()
-
-        cursor.execute('SELECT `score` FROM `sel` WHERE `discord_tag` = "{}"'.format(discord_tag))
-        res = cursor.fetchone()[0]
-        mariadb_connection.close()
-        return res
-
-    def add_sel(self, discord_tag, value):
-        mariadb_connection = mariadb.connect(user='asphyx', password='', database='discord_private_chat')
-        cursor = mariadb_connection.cursor()
-        current = self.sel_user(discord_tag)
-
-        value = str(int(value) + int(current))
-        cursor.execute('UPDATE sel SET score = {} WHERE discord_tag = "{}"'.format(value, str(discord_tag)))
-        mariadb_connection.commit()
-        mariadb_connection.close()
-
-    def create_user_sel_database(self, username, userid):
-        try:
-            mariadb_connection = mariadb.connect(user='asphyx', password='', database='discord_private_chat')
-            cursor = mariadb_connection.cursor()
-            cursor.execute('INSERT INTO sel(`username`, `score`, `discord_tag`) VALUES ({}, 0, {});'.format(username, userid))
-            mariadb_connection.commit()
-            mariadb_connection.close()
-        except Exception as e:
-            print(e)
-
-### FIN SEL ###
 
 ### GORGEE ###
 
@@ -372,7 +210,7 @@ class PrivateChat(commands.Cog):
     def add_gorgee(self, discord_tag, value):
         mariadb_connection = mariadb.connect(user='asphyx', password='', database='discord_private_chat')
         cursor = mariadb_connection.cursor()
-        current = self.sel_user(discord_tag)
+        current = self.gorgee_user(discord_tag)
 
         value = str(int(value) + int(current))
         cursor.execute('UPDATE gorgee SET score = {} WHERE discord_tag = "{}"'.format(value, str(discord_tag)))

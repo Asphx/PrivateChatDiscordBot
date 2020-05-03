@@ -3,6 +3,9 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix=('.'))
 bot.load_extension('classes.PrivateChat')
+bot.load_extension('classes.Bet')
+bot.load_extension('classes.Scores')
+bot.load_extension('classes.Sel')
 
 
 async def on_ready(self):
@@ -14,4 +17,7 @@ async def on_message(self, message):
     # print('------------')
     pass
 
-bot.run('NjM2NTcxOTQzMzczNTA0NTM0.XoIfng.gSIcXIgYuMrduPgr-vmVMVFmC6Y')
+with open('key') as f:
+        cle = f.readline().strip()
+
+bot.run(cle)
